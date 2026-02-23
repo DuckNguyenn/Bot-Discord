@@ -7,7 +7,7 @@ import requests
 from function import database
 
 # --- CẤU HÌNH ---
-BOT_TOKEN = 'MTQ3MjQ2MjM2MDkwMzAyNDgyMw.G-RJri.xi0nZAjcwTexTT2Xg8P0XrUwqcPxa1OH2cmxBk' 
+BOT_TOKEN = '' 
 CLIENT_ID = '1472462360903024823'
 CLIENT_SECRET = '65r2lmfTnI8AeMn1K4mqXWr1rZ0FNoX0'
 REDIRECT_URI = 'http://localhost:5000/callback'

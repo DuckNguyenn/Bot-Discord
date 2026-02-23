@@ -11,18 +11,17 @@ class Scripts(commands.Cog):
         self.script_list = {
             "atlas": 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Chris12089/atlasbss/main/script.lua"))()',
             
-            "vichop": """getgenv().Config = {
-    ["Field Accept"] = {
-        Enable = true,
-        ["Field Name"] = {
-            "Pepper",
-            "Rose",
-            "Mountain",
-            "Spider"
-        }
-    }
-}
-loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/8839ce9fd98107fcf5cfeb9d3178c6de77e1060ee1e741025f95ca78fd42dc78/download"))()""",
+            "vichop": """_G.hook = "" -- discord webhook url (optional)
+_G.uid = "" -- discord user id for ping (optional)
+_G.delay = "0" -- delay before server hop in seconds
+_G.minlvl = "1" -- minimum vic level to attack (1-12)
+_G.maxlvl = "12" -- maximum vic level to attack (1-12)
+_G.onlygifted = false -- true = only attack/find gifted vics, false = any
+_G.room = "" -- sync room name for searcher system (optional, any name)
+_G.mainuser = "" -- main user for auto searcher system (optional)
+_G.mainwait = true -- true = main waits for searchers, false = main hops if no vics in list
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/1toop/vichop/main/hop.lua"))()""",
             
             # "coco": 'loadstring(game:HttpGet("https://raw.githubusercontent.com/example/coco.lua"))()',
         }

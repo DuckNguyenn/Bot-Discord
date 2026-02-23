@@ -6,60 +6,62 @@ from datetime import datetime
 class Vouch(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # LIỆT KÊ TẤT CẢ ID KÊNH BẠN MUỐN GỬI VOUCH VÀO ĐÂY
-        self.VOUCH_CHANNELS = [
-            1381650888652882000, 
-            1394000620754833408,
-            1402904210898554890
-        ]
+        # Thay ID_KENH_VOUCH bằng ID kênh bạn muốn tin nhắn gửi vào
+        self.ID_KENH_VOUCH = 1381650888652882000 
 
-    @app_commands.command(name="vouch", description="Feedback")
+    @app_commands.command(name="vouch", description="Đánh giá sản phẩm dịch vụ")
     @app_commands.describe(
-        noi_dung="Nội dung",
-        hinh_anh="Minh chứng"
+        san_pham="Tên sản phẩm bạn đã mua",
+        danh_gia="Số sao đánh giá (1-5)",
+        hinh_anh="Hình ảnh minh chứng giao dịch"
     )
-    async def vouch(self, interaction: discord.Interaction, noi_dung: str, hinh_anh: discord.Attachment):
-        # 1. Kiểm tra xem file gửi lên có phải là ảnh không
-        if not hinh_anh.content_type or not hinh_anh.content_type.startswith("image"):
-            await interaction.response.send_message("Không hợp lệ", ephemeral=True)
+    async def vouch(
+        self, 
+        interaction: discord.Interaction, 
+        san_pham: str, 
+        danh_gia: app_commands.Range[int, 1, 5], 
+        hinh_anh: discord.Attachment
+    ):
+        # Kiểm tra nếu file tải lên không phải là ảnh
+        if not hinh_anh.content_type.startswith("image"):
+            await interaction.response.send_message("File đính kèm phải là hình ảnh!", ephemeral=True)
             return
 
-        # Dùng defer vì gửi nhiều kênh có thể tốn hơn 3s
-        await interaction.response.defer(ephemeral=True)
+        # Phản hồi ẩn để xác nhận đã nhận lệnh
+        await interaction.response.send_message("Đã gửi đánh giá", ephemeral=True)
 
-        # 2. Tạo Embed (Giữ nguyên y hệt bảng ban đầu của bạn)
+        # Lấy channel chỉ định theo ID
+        target_channel = self.bot.get_channel(self.ID_KENH_VOUCH)
+        
+        # Nếu không tìm thấy channel (sai ID hoặc bot không có quyền xem), gửi tại channel hiện tại
+        if target_channel is None:
+            target_channel = interaction.channel
+
+        # Tạo chuỗi sao dựa trên số sao người dùng nhập
+        stars = "⭐" * danh_gia
+
+        # Tạo Embed hiển thị đánh giá (Giữ nguyên nội dung của bạn)
         embed = discord.Embed(
-            title="Vouch",
-            description=f"**User:** {interaction.user.mention}\n**Nội dung:** {noi_dung}",
+            title="Vouch/Tus ut",
             color=discord.Color.green(),
             timestamp=datetime.now()
         )
         
+        embed.add_field(name="User: ", value=interaction.user.mention, inline=True)
+        embed.add_field(name="Nội dung: ", value=san_pham, inline=True)
+        embed.add_field(name="Đánh giá", value=f"{stars} ({danh_gia}/5)", inline=False)
+        
         embed.set_image(url=hinh_anh.url)
-        embed.set_thumbnail(url=interaction.user.display_avatar.url)
-        embed.set_footer(text=f"User ID: {interaction.user.id}")
+        embed.set_footer(
+            text="Cảm ơn bạn đã tin tưởng sử dụng dịch vụ!", 
+            icon_url=interaction.user.display_avatar.url
+        )
 
-        # 3. Gửi vào tất cả các kênh trong danh sách
-        success_list = []
-        failed_count = 0
-
-        for channel_id in self.VOUCH_CHANNELS:
-            channel = self.bot.get_channel(channel_id)
-            if channel:
-                try:
-                    await channel.send(embed=embed)
-                    success_list.append(channel.mention)
-                except:
-                    failed_count += 1
-            else:
-                failed_count += 1
-
-        # 4. Phản hồi kết quả
-        if success_list:
-            mentions = ", ".join(success_list)
-            await interaction.followup.send(f"Success {mentions}!", ephemeral=True)
-        else:
-            await interaction.followup.send(f"Failed", ephemeral=True)
+        # Gửi tin nhắn đánh giá vào kênh chỉ định
+        message = await target_channel.send(embed=embed)
+        
+        # Thêm emoji tích xanh dưới tin nhắn
+        await message.add_reaction("✅")
 
 async def setup(bot):
     await bot.add_cog(Vouch(bot))

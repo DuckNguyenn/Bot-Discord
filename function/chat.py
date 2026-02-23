@@ -12,38 +12,43 @@ class Chat(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="botmessage", description="Nội dung")
+    @app_commands.command(name="botmessage", description="Gửi tin nhắn kèm hình ảnh qua bot")
     @app_commands.describe(
-        noidung="Nội dung",
-        hinhanh="Hình ảnh"
+        noidung="Nội dung văn bản",
+        hinhanh="Kéo thả hình ảnh vào đây"
     ) 
     @app_commands.check(check_quyen)
     async def botmessage(self, interaction: discord.Interaction, noidung: str = None, hinhanh: discord.Attachment = None):
-        # Kiểm tra nếu cả nội dung và ảnh đều trống
         if noidung is None and hinhanh is None:
             await interaction.response.send_message("Phải nhập nội dung", ephemeral=True)
             return
 
-        # Phản hồi ẩn để tránh lỗi Interaction
         await interaction.response.send_message("ok", ephemeral=True)
         
-        # Xử lý gửi ảnh nếu có
         file = None
         if hinhanh:
-            # Chuyển đổi attachment từ Discord thành file để bot gửi đi
             file = await hinhanh.to_file()
         
-        # Gửi tin nhắn thật vào kênh hiện tại
-        # Sử dụng content=noidung để tránh lỗi nếu noidung là None
         await interaction.channel.send(content=noidung, file=file)
 
+    @app_commands.command(name="svv", description="Link svv")
+    @app_commands.check(check_quyen)
+    async def svv(self, interaction: discord.Interaction):
+        link_roblox = "https://www.roblox.com/share?code=54f7843b34b6334ab95d82efd9952a22&type=Server"
+        # ephemeral=True đảm bảo chỉ người dùng lệnh mới nhìn thấy tin nhắn này
+        await interaction.response.send_message(f"{link_roblox}", ephemeral=True)
+
+    @app_commands.command(name="banggia", description="Bảng giá Cat's shop")
+    async def banggia(self, interaction: discord.Interaction):
+        banggia_imag = "https://image2url.com/r2/default/images/1771853325250-becfda81-7dd9-4110-a63b-4d151079f929.png"
+        await interaction.response.send_message(f"{banggia_imag}")
+    
     @botmessage.error
-    async def botmessage_error(self, interaction: discord.Interaction, error):
+    @svv.error
+    async def quyen_error(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.CheckFailure):
-            # Giữ nguyên nội dung phản hồi cũ của bạn
             await interaction.response.send_message("Down à mà dùng?", ephemeral=True)
         else:
-            # Xử lý các lỗi khác nếu chưa phản hồi
             if not interaction.response.is_done():
                 await interaction.response.send_message(f"Lỗi: {error}", ephemeral=True)
 
