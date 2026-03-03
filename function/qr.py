@@ -16,7 +16,7 @@ NGAN_HANG = "TPBank"
 LOGO_BANK = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/TPBank_Logo.svg/2560px-TPBank_Logo.svg.png"
 
 ID_ADMIN = 1126531490793148427 
-#ALLOWED_ROLES = ["Mèo béo", "Cat Shop"]
+#ALLOWED_ROLES = ["Mèo béo", "Cat Shop". "[Cat’s Shop] - Supporter"]
 
 def check_quyen(interaction: discord.Interaction) -> bool:
     if interaction.user.id == ID_ADMIN:
