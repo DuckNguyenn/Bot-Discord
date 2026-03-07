@@ -75,7 +75,7 @@ class Chat(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.db_path = 'raobai_config.db'
-        self.img_cat_shop = "https://image2url.com/r2/default/images/1772535296937-6abf7344-2758-4427-9926-506918c54c23.png"
+        self.img_cat_shop = "https://image2url.com/r2/default/images/1772910305266-f6cb7d25-3a4e-4db9-b153-801ea729f253.png"
         self.init_db()
         
         self.auto_responses = {
