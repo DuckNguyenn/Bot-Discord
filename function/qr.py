@@ -7,22 +7,24 @@ from datetime import datetime
 # --- CẤU HÌNH ---
 # Link gốc cho QR đầy đủ
 LINK_GOC = "https://img.vietqr.io/image/TPB-00003474347-compact.png"
-# Link cho QR đơn thuần (chỉ STK và Ngân hàng)
 LINK_ORIGINAL = "https://image2url.com/r2/default/images/1771410367472-a2a72015-0984-4f08-b4fa-dfab1a117884.png"
+
+# 👇 THÊM LINK QR MOMO CỦA BẠN VÀO ĐÂY 👇
+LINK_MOMO = "https://image2url.com/r2/default/images/1772905222181-dde61035-f75d-4644-a6ad-77065fd6ec99.png" 
 
 TEN_CHU_TK = "Nguyen Tran Minh Duc"
 STK = "00003474347" 
 NGAN_HANG = "TPBank"
 LOGO_BANK = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/TPBank_Logo.svg/2560px-TPBank_Logo.svg.png"
 
-ID_ADMIN = 1126531490793148427 
-#ALLOWED_ROLES = ["Mèo béo", "Cat Shop". "[Cat’s Shop] - Supporter"]
+ID_ADMIN = 1126531490793148427, 917980517813608499, 1281836308376981566, 1024690715382534144, 1324752071349506091, 1109225990791630909
+ALLOWED_ROLES = ["Mèo béo", "[Cat Shop] - Supporter"]
 
 def check_quyen(interaction: discord.Interaction) -> bool:
-    if interaction.user.id == ID_ADMIN:
+    if interaction.user.id in ID_ADMIN:
         return True
-    #if isinstance(interaction.user, discord.Member):
-    #    return any(role.name in ALLOWED_ROLES for role in interaction.user.roles)
+    if isinstance(interaction.user, discord.Member):
+        return any(role.name in ALLOWED_ROLES for role in interaction.user.roles)
     return False
 
 class QR(commands.Cog):
@@ -42,7 +44,7 @@ class QR(commands.Cog):
 
         embed = discord.Embed(
             title="Pate cho mèo béo 🐱", 
-            description=f"Thằng nào có tiền thì... **{interaction.user.mention}**",
+            description=f"Thằng nào có tiền thì...",
             color=0x6f3da1, 
             timestamp=datetime.now()
         )
@@ -61,7 +63,6 @@ class QR(commands.Cog):
     @app_commands.command(name="qr_original", description="QR bank bth")
     @app_commands.check(check_quyen)
     async def qr_original(self, interaction: discord.Interaction):
-        # QR đơn thuần không truyền thêm amount và addInfo
         final_url = LINK_ORIGINAL 
 
         embed = discord.Embed(
@@ -79,13 +80,33 @@ class QR(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
 
+    # --- LỆNH MOMO ĐÃ CẤU HÌNH SẴN ---
+    @app_commands.command(name="momo", description="Gửi mã QR Momo")
+    @app_commands.check(check_quyen)
+    async def momo(self, interaction: discord.Interaction):
+        embed = discord.Embed(
+            title="Momo", 
+            description=f"Thằng nào có tiền thì...",
+            color=0xa50064, # Mã màu củ dền chuẩn của Momo
+            timestamp=datetime.now()
+        )
+        # Gắn logo Momo nhỏ ở góc
+        embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png")
+        # Gắn link ảnh QR mà bạn đã cấu hình ở trên cùng
+        embed.set_image(url=LINK_MOMO)
+        embed.set_footer(text="Meow Meow", icon_url="https://media.tenor.com/FLfJEQ0Q8wQAAAAM/rigby-freaky.gif")
+        
+        await interaction.response.send_message(embed=embed)
+
+    # --- BẮT LỖI QUYỀN HẠN ---
     @qr.error
     @qr_original.error
-    async def qr_error(self, interaction: discord.Interaction, error):
+    @momo.error
+    async def error_handler(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.CheckFailure):
             embed = discord.Embed(
                 title="TỪ CHỐI TRUY CẬP",
-                description="Down đòi dùng bot",
+                description=f"Down đòi dùng bot\n*(ID của bạn là: `{interaction.user.id}`)*",
                 color=discord.Color.red()
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)

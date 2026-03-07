@@ -66,7 +66,7 @@ class MyBot(commands.Bot):
         # 2. Load các module
         initial_extensions = [
             'function.qr', 'function.chat', 'function.restore', 
-            'function.scripts', 'function.vouch', 'buonban.shop', 'function.puff_warn'
+            'function.scripts', 'function.vouch', 'buonban.shop', 'function.puff_warn','function.verify'
         ]
         
         for extension in initial_extensions:

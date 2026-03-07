@@ -1,1 +1,2 @@
-discord.py
+pip install discord.py flask requests python-dotenv
+pip install flask requests
