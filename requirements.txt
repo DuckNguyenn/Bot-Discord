@@ -1,0 +1,6 @@
+discord.py
+flask
+requests
+python-dotenv
+cohere
+psycopg[binary]
